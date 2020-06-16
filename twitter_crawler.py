@@ -13,7 +13,6 @@ class TwitterCrawler():
         self.auth.set_access_token(self.access_token, self.access_token_secret)
         self.api = tweepy.API(self.auth)
         self.folder_file = folder_filename
-        self.function == None
 
 
     def _limit_handled(self, iterator):
@@ -30,7 +29,6 @@ class TwitterCrawler():
                 return
 
     def get_users_timeline(self, user_ids):
-        self.function = "timeline"
         num_users = 0
 
         for id in user_ids:
@@ -77,7 +75,6 @@ class TwitterCrawler():
 
 
     def search(self, keyword, since_id):
-        self.function = "search"
         writer = open(f"{self.folder_file}/tweets/sgunited_1.csv", "w", encoding="utf8")
 
         # result_type 'recent' returns 0 tweets if there is no recent tweets
