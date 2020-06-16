@@ -47,19 +47,21 @@ class TwitterCrawler():
                 reader = open(file, "r", encoding="utf8")
                 line = reader.readline()
                 jtweet = json.loads(line)
-                since_id = jtweet["id"]
-                created_date = jtweet["created_at"]
-                dat = datetime.strptime(created_date, "%a %b %d %H:%M:%S %z %Y")
-                reader.close()
 
-                latest_date1 = datetime.strptime("Tue Jun 30 00:00:00 +0800 2020", "%a %b %d %H:%M:%S %z %Y")
-                latest_date2 = datetime.now()
-                latest_date = max(latest_date1, latest_date2)
+                if line != "":
+                    since_id = jtweet["id"]
+                    created_date = jtweet["created_at"]
+                    dat = datetime.strptime(created_date, "%a %b %d %H:%M:%S %z %Y")
+                    reader.close()
 
-                tweets_iterator = iter([])
-                if (latest_date - dat).seconds > 3600:
-                    writer = open(file, "a", encoding="utf8")
-                    tweets_iterator = tweepy.Cursor(self.api.user_timeline, user_id=id, since_id=since_id).items()
+                    latest_date1 = datetime.strptime("Tue Jun 30 00:00:00 +0800 2020", "%a %b %d %H:%M:%S %z %Y")
+                    latest_date2 = datetime.now()
+                    latest_date = max(latest_date1, latest_date2)
+
+                    tweets_iterator = iter([])
+                    if (latest_date - dat).seconds > 3600:
+                        writer = open(file, "a", encoding="utf8")
+                        tweets_iterator = tweepy.Cursor(self.api.user_timeline, user_id=id, since_id=since_id).items()
             else:
                 writer = open(file, "w", encoding="utf8")
                 tweets_iterator = tweepy.Cursor(self.api.user_timeline, user_id=id).items()
@@ -125,6 +127,11 @@ def get_user_ids (file):
 
 
 if __name__ == "__main__":
+    reader = open("seed_user_ids2.txt", "r", encoding="utf8")
+    line = reader.readline()
+    print(line == "")
+    sys.exit()
+
     twit_crawl = TwitterCrawler([twitter_keys.n4j2_ck, twitter_keys.n4j2_cs, twitter_keys.n4j2_at, twitter_keys.n4j2_ats],
                                 "sgunited")
     user_ids = get_user_ids("seed_user_ids1.txt")
