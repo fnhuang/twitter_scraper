@@ -32,6 +32,8 @@ class TwitterCrawler():
                 print("")
                 print("Sleeping for", seconds / 60, "minutes")
                 time.sleep(seconds)
+            except StopIteration:
+                return
 
     def get_users_timeline(self, user_ids):
         num_users = 0
