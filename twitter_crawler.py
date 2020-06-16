@@ -16,15 +16,20 @@ class TwitterCrawler():
 
 
     def _limit_handled(self, iterator):
+        iter = 0
         while True:
             try:
+                iter += 1
                 yield iterator.next()
-            except (tweepy.RateLimitError, tweepy.error.TweepError):
-                seconds = 15 * 60
+            except (tweepy.RateLimitError, tweepy.error.TweepError) as e:
+                if iter > 1:
+                    return
+                else:
+                    seconds = 15 * 60
 
-                print("")
-                print("Sleeping for", seconds / 60, "minutes")
-                time.sleep(seconds)
+                    print("")
+                    print("Sleeping for", seconds / 60, "minutes")
+                    time.sleep(seconds)
             except StopIteration:
                 return
 
@@ -36,15 +41,25 @@ class TwitterCrawler():
 
             file = f"{self.folder_file}/timeline/{id}.csv"
 
+            tweets_iterator = None
+
             if os.path.exists(file):
                 reader = open(file, "r", encoding="utf8")
                 line = reader.readline()
                 jtweet = json.loads(line)
                 since_id = jtweet["id"]
+                created_date = jtweet["created_at"]
+                dat = datetime.strptime(created_date, "%a %b %d %H:%M:%S %z %Y")
                 reader.close()
 
-                writer = open(file, "a", encoding="utf8")
-                tweets_iterator = tweepy.Cursor(self.api.user_timeline, user_id=id, since_id=since_id).items()
+                latest_date1 = datetime.strptime("Tue Jun 30 00:00:00 +0800 2020", "%a %b %d %H:%M:%S %z %Y")
+                latest_date2 = datetime.now()
+                latest_date = max(latest_date1, latest_date2)
+
+                tweets_iterator = iter([])
+                if (latest_date - dat).seconds > 3600:
+                    writer = open(file, "a", encoding="utf8")
+                    tweets_iterator = tweepy.Cursor(self.api.user_timeline, user_id=id, since_id=since_id).items()
             else:
                 writer = open(file, "w", encoding="utf8")
                 tweets_iterator = tweepy.Cursor(self.api.user_timeline, user_id=id).items()
