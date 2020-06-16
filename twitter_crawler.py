@@ -119,8 +119,9 @@ if __name__ == "__main__":
     twit_crawl = TwitterCrawler([twitter_keys.n4j2_ck, twitter_keys.n4j2_cs, twitter_keys.n4j2_at, twitter_keys.n4j2_ats],
                                 "sgunited")
 
-    user_ids = get_user_ids("../covid19/seed_user_ids.txt")
+    #user_ids = get_user_ids("../covid19/seed_user_ids.txt")
+    user_ids = get_user_ids("seed_user_ids.txt")
     #twit_crawl.search("#SGUnited", 1272443497023328256)
 
-    twit_crawl.get_users_timeline(["491303149"])
+    twit_crawl.get_users_timeline(user_ids)
 
