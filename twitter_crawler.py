@@ -127,11 +127,6 @@ def get_user_ids (file):
 
 
 if __name__ == "__main__":
-    reader = open("seed_user_ids2.txt", "r", encoding="utf8")
-    line = reader.readline()
-    print(line == "")
-    sys.exit()
-
     twit_crawl = TwitterCrawler([twitter_keys.n4j2_ck, twitter_keys.n4j2_cs, twitter_keys.n4j2_at, twitter_keys.n4j2_ats],
                                 "sgunited")
     user_ids = get_user_ids("seed_user_ids1.txt")
