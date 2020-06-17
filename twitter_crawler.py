@@ -16,20 +16,20 @@ class TwitterCrawler():
 
 
     def _limit_handled(self, iterator):
-        iter = 0
+        #iterator gets ALL results
         while True:
             try:
-                iter += 1
                 yield iterator.next()
-            except (tweepy.RateLimitError, tweepy.error.TweepError) as e:
-                if iter > 1:
-                    return
-                else:
-                    seconds = 15 * 60
+            except tweepy.RateLimitError as e:
+                seconds = 15 * 60
 
-                    print("")
-                    print("Sleeping for", seconds / 60, "minutes")
-                    time.sleep(seconds)
+                print("")
+                print("Sleeping for", seconds / 60, "minutes")
+                time.sleep(seconds)
+            except tweepy.TweepError as e:
+                print("")
+                print(e)
+                return
             except StopIteration:
                 return
 
@@ -156,6 +156,6 @@ if __name__ == "__main__":
 
 
     #twit_crawl.search("#SGUnited", 1272443497023328256)
-    twit_crawl.get_users_timeline(["491303149"])
+    twit_crawl.get_users_timeline(["1042724962912497664"])
     #twit_crawl.get_users_timeline(user_ids)
 
