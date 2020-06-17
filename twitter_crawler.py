@@ -60,8 +60,8 @@ class TwitterCrawler():
                     latest_date2 = datetime.now()
                     latest_date = min(latest_date1.replace(tzinfo=None), latest_date2.replace(tzinfo=None))
 
-                    tweets_iterator = iter([])
-                    if (latest_date - dat).seconds > 86400:
+                    tweets_iterator = None
+                    if (latest_date - dat).total_seconds() > 86400:
                         writer = open(file, "a", encoding="utf8")
                         tweets_iterator = tweepy.Cursor(self.api.user_timeline, user_id=id, since_id=since_id).items()
             else:
@@ -70,26 +70,27 @@ class TwitterCrawler():
 
             total_tweet = 0
 
-            for tweet in self._limit_handled(tweets_iterator):
-                total_tweet += 1
+            if tweets_iterator != None:
+                for tweet in self._limit_handled(tweets_iterator):
+                    total_tweet += 1
 
-                jtweet = tweet._json
+                    jtweet = tweet._json
 
-                created_date = jtweet["created_at"]
-                earliest_date = datetime.strptime("Wed Jan 01 00:00:00 +0800 2020", "%a %b %d %H:%M:%S %z %Y")
-                dat = datetime.strptime(created_date, "%a %b %d %H:%M:%S %z %Y")
-                dat = dat.replace(tzinfo=utc).astimezone(tz=timezone("Asia/Singapore"))
-                if dat < earliest_date:
-                    break
+                    created_date = jtweet["created_at"]
+                    earliest_date = datetime.strptime("Wed Jan 01 00:00:00 +0800 2020", "%a %b %d %H:%M:%S %z %Y")
+                    dat = datetime.strptime(created_date, "%a %b %d %H:%M:%S %z %Y")
+                    dat = dat.replace(tzinfo=utc).astimezone(tz=timezone("Asia/Singapore"))
+                    if dat < earliest_date:
+                        break
 
-                writer.write(json.dumps(jtweet))
-                writer.write("\n")
-                writer.flush()
+                    writer.write(json.dumps(jtweet))
+                    writer.write("\n")
+                    writer.flush()
 
-            writer.close()
+                writer.close()
 
-            print("\r", end="")
-            print("Users scraped:", f"{num_users}/{len(user_ids)}", end="", flush=True)
+                print("\r", end="")
+                print("Users scraped:", f"{num_users}/{len(user_ids)}", end="", flush=True)
 
 
 
@@ -140,6 +141,6 @@ if __name__ == "__main__":
 
 
     #twit_crawl.search("#SGUnited", 1272443497023328256)
-    #twit_crawl.get_users_timeline(["491303149"])
-    twit_crawl.get_users_timeline(user_ids)
+    twit_crawl.get_users_timeline(["491303149"])
+    #twit_crawl.get_users_timeline(user_ids)
 
