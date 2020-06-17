@@ -45,19 +45,34 @@ class TwitterCrawler():
 
             if os.path.exists(file):
                 reader = open(file, "r", encoding="utf8")
-                line = reader.readline()
-                jtweet = json.loads(line)
+                lines = reader.readlines()
 
-                if line != "":
-                    since_id = jtweet["id"]
-                    created_date = jtweet["created_at"]
-                    dat = datetime.strptime(created_date, "%a %b %d %H:%M:%S %z %Y")
+                if len(lines) > 0:
+                    jtweet1 = json.loads(lines[0])
+                    since_id1 = jtweet1["id"]
+                    created_date1 = jtweet1["created_at"]
+
+                    jtweet2 = json.loads(lines[len(lines)-1])
+                    since_id2 = jtweet2["id"]
+                    created_date2 = jtweet2["created_at"]
+
+                    dat1 = datetime.strptime(created_date1, "%a %b %d %H:%M:%S %z %Y")
+                    dat2 = datetime.strptime(created_date2, "%a %b %d %H:%M:%S %z %Y")
+
+                    if dat1.replace(tzinfo=None) >= dat2.replace(tzinfo=None):
+                        since_id = since_id1
+                        dat = dat1.replace(tzinfo=None)
+                    else:
+                        since_id = since_id2
+                        dat = dat2.replace(tzinfo=None)
+
                     dat = dat.replace(tzinfo=utc).astimezone(tz=timezone("Asia/Singapore"))
                     dat = dat.replace(tzinfo=None)
                     reader.close()
 
                     latest_date1 = datetime.strptime("Tue Jun 30 00:00:00 +0800 2020", "%a %b %d %H:%M:%S %z %Y")
-                    latest_date2 = datetime.now()
+                    latest_date2 = datetime.utcnow()
+                    latest_date2 = latest_date2.replace(tzinfo=utc).astimezone(tz=timezone("Asia/Singapore"))
                     latest_date = min(latest_date1.replace(tzinfo=None), latest_date2.replace(tzinfo=None))
 
                     tweets_iterator = None
