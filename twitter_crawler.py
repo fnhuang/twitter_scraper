@@ -52,14 +52,16 @@ class TwitterCrawler():
                     since_id = jtweet["id"]
                     created_date = jtweet["created_at"]
                     dat = datetime.strptime(created_date, "%a %b %d %H:%M:%S %z %Y")
+                    dat = dat.replace(tzinfo=utc).astimezone(tz=timezone("Asia/Singapore"))
+                    dat = dat.replace(tzinfo=None)
                     reader.close()
 
                     latest_date1 = datetime.strptime("Tue Jun 30 00:00:00 +0800 2020", "%a %b %d %H:%M:%S %z %Y")
                     latest_date2 = datetime.now()
-                    latest_date = max(latest_date1, latest_date2)
+                    latest_date = min(latest_date1.replace(tzinfo=None), latest_date2.replace(tzinfo=None))
 
                     tweets_iterator = iter([])
-                    if (latest_date - dat).seconds > 3600:
+                    if (latest_date - dat).seconds > 86400:
                         writer = open(file, "a", encoding="utf8")
                         tweets_iterator = tweepy.Cursor(self.api.user_timeline, user_id=id, since_id=since_id).items()
             else:
@@ -138,6 +140,6 @@ if __name__ == "__main__":
 
 
     #twit_crawl.search("#SGUnited", 1272443497023328256)
-
+    #twit_crawl.get_users_timeline(["491303149"])
     twit_crawl.get_users_timeline(user_ids)
 
