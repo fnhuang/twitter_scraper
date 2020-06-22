@@ -78,10 +78,10 @@ class TwitterCrawler():
                     tweets_iterator = None
                     if (latest_date - dat).total_seconds() > 86400:
                         writer = open(file, "a", encoding="utf8")
-                        tweets_iterator = tweepy.Cursor(self.api.user_timeline, user_id=id, since_id=since_id).items()
+                        tweets_iterator = tweepy.Cursor(self.api.user_timeline, user_id=id, since_id=since_id, tweet_mode="extended").items()
             else:
                 writer = open(file, "w", encoding="utf8")
-                tweets_iterator = tweepy.Cursor(self.api.user_timeline, user_id=id).items()
+                tweets_iterator = tweepy.Cursor(self.api.user_timeline, user_id=id, tweet_mode="extended").items()
 
             total_tweet = 0
 
@@ -101,6 +101,8 @@ class TwitterCrawler():
                     writer.write(json.dumps(jtweet))
                     writer.write("\n")
                     writer.flush()
+
+
 
                 writer.close()
 
@@ -155,7 +157,7 @@ if __name__ == "__main__":
     user_ids = get_user_ids("seed_user_ids2.txt")
 
 
-    #twit_crawl.search("#SGUnited", 1272443497023328256)
-    twit_crawl.get_users_timeline(["1042724962912497664"])
+    #twit_crawl.search("#SGUnited", 1272792796513005581)
+    twit_crawl.get_users_timeline(["358694898"])
     #twit_crawl.get_users_timeline(user_ids)
 
