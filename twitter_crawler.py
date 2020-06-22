@@ -116,9 +116,9 @@ class TwitterCrawler():
 
         # result_type 'recent' returns 0 tweets if there is no recent tweets
         if since_id == -1:
-            tweets_iterator = tweepy.Cursor(self.api.search, q=keyword).items()
+            tweets_iterator = tweepy.Cursor(self.api.search, q=keyword, tweet_mode="extended").items()
         else:
-            tweets_iterator = tweepy.Cursor(self.api.search, q=keyword, since_id=since_id).items()
+            tweets_iterator = tweepy.Cursor(self.api.search, q=keyword, since_id=since_id, tweet_mode="extended").items()
 
         total_tweet = 0
 
