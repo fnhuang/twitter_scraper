@@ -43,6 +43,8 @@ class TwitterCrawler():
 
             tweets_iterator = None
 
+            write_mode = "w"
+
             if os.path.exists(file):
                 reader = open(file, "r", encoding="utf8")
                 lines = reader.readlines()
@@ -80,6 +82,7 @@ class TwitterCrawler():
                     tweets_iterator = None
                     if (latest_date - dat).total_seconds() > 86400:
                         writer = open(file, "a", encoding="utf8")
+                        write_mode = "a"
                         tweets_iterator = tweepy.Cursor(self.api.user_timeline, user_id=id, since_id=since_id, tweet_mode="extended").items()
             else:
                 writer = open(file, "w", encoding="utf8")
@@ -99,10 +102,12 @@ class TwitterCrawler():
                     dat = dat.replace(tzinfo=utc).astimezone(tz=timezone("Asia/Singapore"))
 
                     latest_date = datetime.strptime("Tue Jun 30 00:00:00 +0800 2020", "%a %b %d %H:%M:%S %z %Y")
-                    if dat < earliest_date or dat > latest_date:
+                    if dat < earliest_date:
                         break
 
-                    writer.write(json.dumps(jtweet))
+                    if dat <= latest_date:
+                        writer.write(json.dumps(jtweet))
+                        
                     writer.write("\n")
                     writer.flush()
 
