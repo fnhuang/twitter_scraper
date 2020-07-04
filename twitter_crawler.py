@@ -107,8 +107,7 @@ class TwitterCrawler():
 
                     if dat <= latest_date:
                         writer.write(json.dumps(jtweet))
-                        
-                    writer.write("\n")
+                        writer.write("\n")
                     writer.flush()
 
 
