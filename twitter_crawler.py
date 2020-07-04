@@ -59,6 +59,8 @@ class TwitterCrawler():
                     dat1 = datetime.strptime(created_date1, "%a %b %d %H:%M:%S %z %Y")
                     dat2 = datetime.strptime(created_date2, "%a %b %d %H:%M:%S %z %Y")
 
+                    #tzinfo is time zone info. Assigning none to it means making it static
+                    #so that the two times can be compared.
                     if dat1.replace(tzinfo=None) >= dat2.replace(tzinfo=None):
                         since_id = since_id1
                         dat = dat1.replace(tzinfo=None)
@@ -95,7 +97,9 @@ class TwitterCrawler():
                     earliest_date = datetime.strptime("Wed Jan 01 00:00:00 +0800 2020", "%a %b %d %H:%M:%S %z %Y")
                     dat = datetime.strptime(created_date, "%a %b %d %H:%M:%S %z %Y")
                     dat = dat.replace(tzinfo=utc).astimezone(tz=timezone("Asia/Singapore"))
-                    if dat < earliest_date:
+
+                    latest_date = datetime.strptime("Tue Jun 30 00:00:00 +0800 2020", "%a %b %d %H:%M:%S %z %Y")
+                    if dat < earliest_date or dat > latest_date:
                         break
 
                     writer.write(json.dumps(jtweet))
@@ -157,7 +161,7 @@ if __name__ == "__main__":
     user_ids = get_user_ids("seed_user_ids2.txt")
 
 
-    #twit_crawl.search("#SGUnited", 1272792796513005581)
-    twit_crawl.get_users_timeline(["358694898"])
-    #twit_crawl.get_users_timeline(user_ids)
+    #twit_crawl.search("#SGUnited", 1277497286939959298)
+    #twit_crawl.get_users_timeline(["358694898"])
+    twit_crawl.get_users_timeline(user_ids)
 
